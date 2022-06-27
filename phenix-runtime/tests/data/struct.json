@@ -1,0 +1,9 @@
+{
+    "version": "0.1",
+    "tests": [
+        {
+            "value": { "string": "Hello world!", "optional1": null, "generic": [true, false, true], "optional2": 3 },
+            "bytes": [2, 12, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33, 3, 5, 3]
+        }
+    ]
+}

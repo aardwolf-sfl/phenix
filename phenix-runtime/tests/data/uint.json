@@ -1,0 +1,41 @@
+{
+    "version": "0.1",
+    "tests": [
+        {
+            "value": 0,
+            "bytes": [0]
+        },
+        {
+            "value": 1,
+            "bytes": [1]
+        },
+        {
+            "value": 248,
+            "bytes": [248, 248]
+        },
+        {
+            "value": 256,
+            "bytes": [249, 0, 1]
+        },
+        {
+            "value": 18446744073709551615,
+            "bytes": [255, 255, 255, 255, 255, 255, 255, 255, 255]
+        }
+    ],
+    "errors": [
+        {
+            "bytes": [],
+            "error": {
+                "kind": "UnexpectedEof",
+                "pos": 0
+            }
+        },
+        {
+            "bytes": [248],
+            "error": {
+                "kind": "UnexpectedEof",
+                "pos": 0
+            }
+        }
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "version": "0.1",
+    "tests": [
+        {
+            "value": false,
+            "bytes": [0]
+        },
+        {
+            "value": true,
+            "bytes": [1]
+        },
+        {
+            "value": false,
+            "bytes": [2],
+            "no_encode": true
+        },
+        {
+            "value": [],
+            "bytes": []
+        },
+        {
+            "value": [false],
+            "bytes": [0]
+        },
+        {
+            "value": [true],
+            "bytes": [1]
+        },
+        {
+            "value": [true, false, true, false, false, true, true, false],
+            "bytes": [101]
+        },
+        {
+            "value": [true, false, true, false, false, true, true, false, true],
+            "bytes": [101, 1]
+        }
+    ],
+    "errors": [
+        {
+            "bytes": [101],
+            "many": 9,
+            "error": {
+                "kind": "UnexpectedEof",
+                "pos": 0
+            }
+        },
+        {
+            "bytes": [101],
+            "many": 16,
+            "error": {
+                "kind": "UnexpectedEof",
+                "pos": 0
+            }
+        }
+    ]
+}

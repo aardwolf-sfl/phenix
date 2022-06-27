@@ -1,0 +1,17 @@
+{
+    "version": "0.1",
+    "tests": [
+        {
+            "value": [],
+            "bytes": [0, 0]
+        },
+        {
+            "value": ["Foo", "Baz"],
+            "bytes": [5, 0]
+        },
+        {
+            "value": ["BazQux"],
+            "bytes": [0, 2]
+        }
+    ]
+}

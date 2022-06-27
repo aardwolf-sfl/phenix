@@ -1,0 +1,33 @@
+{
+    "version": "0.1",
+    "tests": [
+        {
+            "value": "Hello world!",
+            "bytes": [12, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33]
+        },
+        {
+            "value": "💖",
+            "bytes": [4, 240, 159, 146, 150]
+        },
+        {
+            "value": "",
+            "bytes": [0]
+        }
+    ],
+    "errors": [
+        {
+            "bytes": [4, 240, 159, 146],
+            "error": {
+                "kind": "UnexpectedEof",
+                "pos": 1
+            }
+        },
+        {
+            "bytes": [4, 0, 159, 146, 150],
+            "error": {
+                "kind": "ValueError",
+                "pos": 2
+            }
+        }
+    ]
+}

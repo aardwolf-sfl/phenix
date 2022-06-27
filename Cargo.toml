@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "phenix-runtime",
+    "phenix-runtime/macros"
+]
