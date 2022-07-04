@@ -20,7 +20,7 @@ pub fn recognize_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> 
         let count = optional_fields.len();
 
         body.extend(quote! {
-            let optional = phenix_runtime::base::bool::recognize_many(bytes, #count)?;
+            let optional = ::phenix_runtime::base::bool::recognize_many(bytes, #count)?;
             let optional = optional.as_bytes();
         });
     }
@@ -33,7 +33,7 @@ pub fn recognize_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> 
         let recognize_field = match util::unwrap_option_type(&field.ty) {
             Some(option_ty) => {
                 let recognize_field = quote! {
-                    if phenix_runtime::base::utils::test_bit_at(#optional_bit, optional) {
+                    if ::phenix_runtime::base::utils::test_bit_at(#optional_bit, optional) {
                         <#option_ty>::recognize(bytes, buf)?;
                     }
                 };
@@ -47,7 +47,7 @@ pub fn recognize_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> 
         body.extend(recognize_field);
     }
 
-    body.extend(quote!(std::result::Result::Ok(bytes.take_slice_from(mark))));
+    body.extend(quote!(::std::result::Result::Ok(bytes.take_slice_from(mark))));
     body
 }
 
@@ -62,7 +62,7 @@ pub fn recognize_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> Toke
     body.extend(quote!(let mark = bytes.mark();));
 
     body.extend(
-        quote!(let discriminant = phenix_runtime::base::utils::decode_items_count(bytes)?;),
+        quote!(let discriminant = ::phenix_runtime::base::utils::decode_items_count(bytes)?;),
     );
 
     let mut match_body = TokenStream2::new();
@@ -89,14 +89,14 @@ pub fn recognize_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> Toke
     }
 
     match_body
-        .extend(quote!(_ => return std::result::Result::Err(phenix_runtime::InvalidPrefix::new(bytes).into())));
+        .extend(quote!(_ => return ::std::result::Result::Err(::phenix_runtime::InvalidPrefix::new(bytes).into())));
 
     body.extend(quote! {
         match discriminant {
             #match_body
         }
 
-        std::result::Result::Ok(bytes.take_slice_from(mark))
+        ::std::result::Result::Ok(bytes.take_slice_from(mark))
     });
     body
 }

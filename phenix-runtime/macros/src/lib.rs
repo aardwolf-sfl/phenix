@@ -36,7 +36,7 @@ pub fn encodable(tokens: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl #impl_generics phenix_runtime::Encodable for #name #ty_generics #where_clause {
-            fn encode<W: std::io::Write>(&self, writer: &mut W) -> std::io::Result<()> {
+            fn encode<W: ::std::io::Write>(&self, writer: &mut W) -> ::std::io::Result<()> {
                 #encode_body
             }
         }
@@ -86,15 +86,15 @@ pub fn decodable(tokens: TokenStream) -> TokenStream {
         impl #impl_generics phenix_runtime::Decodable for #name #ty_generics #where_clause {
             fn decode(
                 bytes: &mut phenix_runtime::bytes::Bytes<'_>,
-                buf: &mut std::vec::Vec<u8>,
-            ) -> std::result::Result<Self, phenix_runtime::DecodingError> {
+                buf: &mut ::std::vec::Vec<u8>,
+            ) -> ::std::result::Result<Self, phenix_runtime::DecodingError> {
                 #decode_body
             }
 
             fn recognize<'a>(
                 bytes: &mut phenix_runtime::bytes::Bytes<'a>,
-                buf: &mut std::vec::Vec<u8>,
-            ) -> std::result::Result<phenix_runtime::bytes::ByteSlice<'a, Self>, phenix_runtime::DecodingError> {
+                buf: &mut ::std::vec::Vec<u8>,
+            ) -> ::std::result::Result<phenix_runtime::bytes::ByteSlice<'a, Self>, phenix_runtime::DecodingError> {
                 #recognize_body
             }
         }
@@ -144,7 +144,7 @@ pub fn is_flag(tokens: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl phenix_runtime::IsFlag for #name {
-            type IntoIter = std::array::IntoIter<Self, #count>;
+            type IntoIter = ::std::array::IntoIter<Self, #count>;
 
             const COUNT: usize = #count;
             const IS_EXHAUSTIVE: bool = #is_exhaustive;

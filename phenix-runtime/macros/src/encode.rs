@@ -22,7 +22,7 @@ pub fn encode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
         }
 
         body.extend(quote! {
-            phenix_runtime::base::bool::encode_many(&[#optional_list], writer)?;
+            ::phenix_runtime::base::bool::encode_many(&[#optional_list], writer)?;
         });
     }
 
@@ -30,7 +30,7 @@ pub fn encode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
         let field_name = field.ident.clone().unwrap_or_else(|| parse_quote!(#i));
         let encode_field = if util::is_option_type(&field.ty) {
             quote! {
-                if let std::option::Option::Some(#field_name) = self.#field_name {
+                if let ::std::option::Option::Some(#field_name) = self.#field_name {
                     #field_name.encode(writer)?;
                 }
             }
@@ -41,7 +41,7 @@ pub fn encode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
         body.extend(encode_field);
     }
 
-    body.extend(quote!(std::result::Result::Ok(())));
+    body.extend(quote!(::std::result::Result::Ok(())));
     body
 }
 
@@ -73,7 +73,7 @@ pub fn encode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
         let discriminant = match self {
             #match_body
         };
-        phenix_runtime::base::utils::encode_items_count(discriminant, writer)?;
+        ::phenix_runtime::base::utils::encode_items_count(discriminant, writer)?;
     });
 
     match_body = TokenStream2::new();
@@ -107,6 +107,6 @@ pub fn encode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
         }
     });
 
-    body.extend(quote!(std::result::Result::Ok(())));
+    body.extend(quote!(::std::result::Result::Ok(())));
     body
 }

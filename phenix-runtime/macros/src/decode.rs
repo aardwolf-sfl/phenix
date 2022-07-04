@@ -18,7 +18,7 @@ pub fn decode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
         let count = optional_fields.len();
 
         body.extend(quote! {
-            let optional__ = phenix_runtime::base::bool::recognize_many(bytes, #count)?;
+            let optional__ = ::phenix_runtime::base::bool::recognize_many(bytes, #count)?;
             let optional__ = optional__.as_bytes();
         });
     }
@@ -35,10 +35,10 @@ pub fn decode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
         let decode_field = match util::unwrap_option_type(&field.ty) {
             Some(option_ty) => {
                 let decode_field = quote! {
-                    if phenix_runtime::base::utils::test_bit_at(#optional_bit, optional__) {
-                        std::option::Option::Some(<#option_ty>::decode(bytes, buf)?)
+                    if ::phenix_runtime::base::utils::test_bit_at(#optional_bit, optional__) {
+                        ::std::option::Option::Some(<#option_ty>::decode(bytes, buf)?)
                     } else {
-                        std::option::Option::None
+                        ::std::option::Option::None
                     }
                 };
 
@@ -59,7 +59,7 @@ pub fn decode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
     });
 
     body.extend(quote! {
-        std::result::Result::Ok(Self {
+        ::std::result::Result::Ok(Self {
             #(#fields,)*
         })
     });
@@ -75,7 +75,7 @@ pub fn decode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
     let mut body = TokenStream2::new();
 
     body.extend(
-        quote!(let discriminant = phenix_runtime::base::utils::decode_items_count(bytes)?;),
+        quote!(let discriminant = ::phenix_runtime::base::utils::decode_items_count(bytes)?;),
     );
 
     let mut match_body = TokenStream2::new();
@@ -135,14 +135,14 @@ pub fn decode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
     }
 
     match_body
-        .extend(quote!(_ => return std::result::Result::Err(phenix_runtime::InvalidPrefix::new(bytes).into())));
+        .extend(quote!(_ => return ::std::result::Result::Err(::phenix_runtime::InvalidPrefix::new(bytes).into())));
 
     body.extend(quote! {
         let value = match discriminant {
             #match_body
         };
 
-        std::result::Result::Ok(value)
+        ::std::result::Result::Ok(value)
     });
     body
 }
