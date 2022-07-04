@@ -1,0 +1,54 @@
+---
+source: phenix-compiler/tests/suite.rs
+expression: project
+---
+modules:
+  - id: 0
+    path: []
+    types:
+      - type: Struct
+        id: 0
+        name: Struct
+        fields:
+          - name: number
+            ty:
+              id:
+                builtin: uint
+              generics: []
+            attrs: []
+          - name: booleans
+            ty:
+              id:
+                builtin: vector
+              generics:
+                - id:
+                    builtin: bool
+                  generics: []
+            attrs: []
+        attrs: []
+      - type: Enum
+        id: 1
+        name: Enum
+        variants:
+          - name: Bare
+            fields: []
+            attrs: []
+          - name: Rich
+            fields:
+              - name: value
+                ty:
+                  id:
+                    builtin: string
+                  generics: []
+                attrs: []
+            attrs: []
+        attrs: []
+      - type: Flags
+        id: 2
+        name: Flags
+        flags:
+          - FOO
+          - BAR
+          - BAZ
+        attrs: []
+

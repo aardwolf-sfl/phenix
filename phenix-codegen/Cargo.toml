@@ -1,0 +1,13 @@
+[package]
+name = "phenix-codegen"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+convert_case = "0.5"
+derive_more = "0.99"
+indexmap = "1"
+prettyplease = "0.1"
+rustc-hash = "1"
+serde = { version = "1", features = ["derive"] }
+syn = "1"

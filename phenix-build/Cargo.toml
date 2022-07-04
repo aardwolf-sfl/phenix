@@ -1,0 +1,8 @@
+[package]
+name = "phenix-build"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+phenix-codegen = { path = "../phenix-codegen" }
+phenix-compiler = { path = "../phenix-compiler" }

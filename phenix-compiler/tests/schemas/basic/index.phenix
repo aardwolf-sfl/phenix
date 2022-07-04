@@ -1,0 +1,19 @@
+// Comment
+
+struct Struct {
+    number: uint,
+    booleans: vector<bool>,
+}
+
+enum Enum {
+    Bare,
+    Rich {
+        value: string,
+    }
+}
+
+flags Flags {
+    FOO,
+    BAR,
+    BAZ,
+}

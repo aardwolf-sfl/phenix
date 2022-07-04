@@ -1,0 +1,5 @@
+import * from "nested/x.phenix"
+
+struct Shared {
+    pair: PairOfNumbers,
+}

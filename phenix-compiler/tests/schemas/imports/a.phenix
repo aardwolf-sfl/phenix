@@ -1,0 +1,5 @@
+import Shared from "c.phenix"
+
+struct A {
+    shared: Shared,
+}

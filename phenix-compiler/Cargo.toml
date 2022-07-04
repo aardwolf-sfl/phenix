@@ -1,0 +1,20 @@
+[package]
+name = "phenix-compiler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossbeam-channel = "0.5"
+derive_more = "0.99"
+logos = "0.12"
+notify = "=5.0.0-pre.15"
+parking_lot = "0.12"
+rowan = "0.15"
+rustc-hash = "1"
+salsa = "0.16"
+indexmap = "1"
+
+phenix-codegen = { path = "../phenix-codegen" }
+
+[dev-dependencies]
+insta = "1"

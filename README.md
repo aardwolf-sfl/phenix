@@ -41,9 +41,12 @@ the following alternatives:
 
 ## Status
 
-**The project is in very early stage of development.** So far, only
-encoding/decoding for a few standard types and its derivatives has been
-implemented. There is no schema compiler nor support for other languages.
+**The project is in very early stage of development.** I have implemented
+encoding/decoding for a few standard types and its derivatives. There is a very
+basic compiler and code generation to Rust. The compiler assumes valid input and
+does not check errors (obviously, this will change in the future). There is no
+documentation, I am still in the phase of proofing the concept and looking for
+rough edges.
 
 ## License
 

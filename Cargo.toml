@@ -1,6 +1,9 @@
 [workspace]
 
 members = [
+    "phenix-build",
+    "phenix-codegen",
+    "phenix-compiler",
     "phenix-runtime",
     "phenix-runtime/macros"
 ]

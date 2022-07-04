@@ -1,0 +1,76 @@
+---
+source: phenix-compiler/tests/suite.rs
+expression: project
+---
+modules:
+  - id: 0
+    path: []
+    types: []
+  - id: 1
+    path:
+      - a
+    types:
+      - type: Struct
+        id: 0
+        name: A
+        fields:
+          - name: shared
+            ty:
+              id:
+                user: 2
+              generics: []
+            attrs: []
+        attrs: []
+  - id: 2
+    path:
+      - c
+    types:
+      - type: Struct
+        id: 2
+        name: Shared
+        fields:
+          - name: pair
+            ty:
+              id:
+                user: 1
+              generics: []
+            attrs: []
+        attrs: []
+  - id: 3
+    path:
+      - nested
+      - x
+    types:
+      - type: Struct
+        id: 1
+        name: PairOfNumbers
+        fields:
+          - name: first
+            ty:
+              id:
+                builtin: uint
+              generics: []
+            attrs: []
+          - name: second
+            ty:
+              id:
+                builtin: uint
+              generics: []
+            attrs: []
+        attrs: []
+  - id: 4
+    path:
+      - b
+    types:
+      - type: Struct
+        id: 3
+        name: B
+        fields:
+          - name: shared
+            ty:
+              id:
+                user: 2
+              generics: []
+            attrs: []
+        attrs: []
+

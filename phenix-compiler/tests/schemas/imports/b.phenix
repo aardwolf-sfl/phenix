@@ -1,0 +1,5 @@
+import Shared as AliasedShared from "c.phenix"
+
+struct B {
+    shared: AliasedShared,
+}
