@@ -141,15 +141,8 @@ impl Decodable for String {
             return Err(UnexpectedEof::new(bytes).into());
         }
 
-        match std::str::from_utf8(&bytes[..len]) {
-            Ok(_) => {
-                bytes.consume(len);
-                Ok(bytes.take_slice_from(mark))
-            }
-            Err(error) => {
-                Err(ValueError::new_at(bytes.mark().to_usize() + error.valid_up_to()).into())
-            }
-        }
+        bytes.consume(len);
+        Ok(bytes.take_slice_from(mark))
     }
 }
 

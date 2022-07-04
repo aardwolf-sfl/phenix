@@ -240,6 +240,8 @@ struct ErrorItem {
     #[serde(default)]
     many: Option<usize>,
     error: Error,
+    #[serde(default)]
+    no_recognize: bool,
 }
 
 #[derive(Debug, Deserialize)]
@@ -358,6 +360,10 @@ where
         }
 
         for error in suite.errors {
+            if error.no_recognize {
+                continue;
+            }
+
             let bytes = &mut Bytes::new(&error.bytes);
             let buf = &mut Vec::new();
 

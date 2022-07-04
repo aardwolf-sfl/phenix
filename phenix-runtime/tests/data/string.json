@@ -27,7 +27,8 @@
             "error": {
                 "kind": "ValueError",
                 "pos": 2
-            }
+            },
+            "no_recognize": true
         }
     ]
 }
