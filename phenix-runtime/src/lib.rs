@@ -13,7 +13,7 @@ pub use phenix_runtime_macros::{Decodable, Encodable, IsFlag};
 pub use traits::{Decodable, Encodable, IsFlag};
 
 pub mod prelude {
-    pub use crate::{Decodable, Encodable, Flags, IsFlag, Stream};
+    pub use crate::{Decodable, Encodable, IsFlag};
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -181,26 +181,30 @@ impl From<Float> for f64 {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Stream<T> {
     offset: usize,
     ty: PhantomData<fn() -> T>,
 }
 
 impl<T: Encodable> Stream<T> {
-    pub fn encode<W: io::Write>(value: &T, writer: &mut W) -> io::Result<()> {
+    pub fn push_encode<W: io::Write>(value: &T, writer: &mut W) -> io::Result<()> {
         value.encode(writer)
     }
 }
 
 impl<T: Decodable> Stream<T> {
     pub fn iter<'a>(&self, origin: &'a [u8]) -> StreamIter<'a, T> {
+        let mut bytes = bytes::Bytes::new(origin);
+        bytes.consume(self.offset);
+
         StreamIter {
-            bytes: bytes::Bytes::new(&origin[self.offset..]),
+            bytes,
             buf: Vec::new(),
             ty: PhantomData,
         }
     }
+
     pub fn collect(&self, origin: &[u8]) -> Result<Vec<T>, DecodingError> {
         let mut buf = Vec::new();
         self.iter(origin)
