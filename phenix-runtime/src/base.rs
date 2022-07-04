@@ -120,9 +120,7 @@ pub mod uint {
                     Ok(value)
                 );
             }
-        }
 
-        proptest! {
             #[test]
             fn fuzz(bytes: Vec<u8>) {
                 let decode_result = decode_from_bytes(&bytes);
@@ -195,9 +193,7 @@ pub mod sint {
                     Ok(value)
                 );
             }
-        }
 
-        proptest! {
             #[test]
             fn fuzz(bytes: Vec<u8>) {
                 let decode_result = decode_from_bytes(&bytes);
@@ -283,9 +279,7 @@ pub mod float {
                     Ok(value)
                 );
             }
-        }
 
-        proptest! {
             #[test]
             fn fuzz(bytes: Vec<u8>) {
                 let decode_result = decode_from_bytes(&bytes);
