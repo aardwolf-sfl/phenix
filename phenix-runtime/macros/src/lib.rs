@@ -1,10 +1,11 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{parse_macro_input, parse_quote, DeriveInput};
+use syn::{parse_macro_input, parse_quote, DeriveInput, ItemStruct};
 
 mod decode;
 mod encode;
+mod parts;
 mod recognize;
 mod util;
 
@@ -15,7 +16,8 @@ pub fn encodable(tokens: TokenStream) -> TokenStream {
 
     let name = input.ident;
 
-    let generics = util::add_trait_bounds(input.generics, parse_quote!(phenix_runtime::Encodable));
+    let generics =
+        util::add_trait_bounds(input.generics, parse_quote!(::phenix_runtime::Encodable));
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let mut encode_body = TokenStream2::new();
@@ -52,7 +54,8 @@ pub fn decodable(tokens: TokenStream) -> TokenStream {
 
     let name = input.ident;
 
-    let generics = util::add_trait_bounds(input.generics, parse_quote!(phenix_runtime::Decodable));
+    let generics =
+        util::add_trait_bounds(input.generics, parse_quote!(::phenix_runtime::Decodable));
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     let mut decode_body = TokenStream2::new();
@@ -83,18 +86,18 @@ pub fn decodable(tokens: TokenStream) -> TokenStream {
     }
 
     let expanded = quote! {
-        impl #impl_generics phenix_runtime::Decodable for #name #ty_generics #where_clause {
+        impl #impl_generics ::phenix_runtime::Decodable for #name #ty_generics #where_clause {
             fn decode(
-                bytes: &mut phenix_runtime::bytes::Bytes<'_>,
+                bytes: &mut ::phenix_runtime::bytes::Bytes<'_>,
                 buf: &mut ::std::vec::Vec<u8>,
-            ) -> ::std::result::Result<Self, phenix_runtime::DecodingError> {
+            ) -> ::std::result::Result<Self, ::phenix_runtime::DecodingError> {
                 #decode_body
             }
 
             fn recognize<'a>(
-                bytes: &mut phenix_runtime::bytes::Bytes<'a>,
+                bytes: &mut ::phenix_runtime::bytes::Bytes<'a>,
                 buf: &mut ::std::vec::Vec<u8>,
-            ) -> ::std::result::Result<phenix_runtime::bytes::ByteSlice<'a, Self>, phenix_runtime::DecodingError> {
+            ) -> ::std::result::Result<::phenix_runtime::bytes::ByteSlice<'a, Self>, ::phenix_runtime::DecodingError> {
                 #recognize_body
             }
         }
@@ -143,7 +146,7 @@ pub fn is_flag(tokens: TokenStream) -> TokenStream {
     let count = flags.len();
 
     let expanded = quote! {
-        impl phenix_runtime::IsFlag for #name {
+        impl ::phenix_runtime::IsFlag for #name {
             type IntoIter = ::std::array::IntoIter<Self, #count>;
 
             const COUNT: usize = #count;
@@ -157,6 +160,58 @@ pub fn is_flag(tokens: TokenStream) -> TokenStream {
 
             fn all() -> Self::IntoIter {
                 [#(#flags,)*].into_iter()
+            }
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro_attribute]
+pub fn by_parts(_: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemStruct);
+    let is_exhaustive = util::is_exhaustive_struct(&input);
+
+    let item = input.clone();
+
+    let name = input.ident.clone();
+    let generics = input.generics.clone();
+    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+    let (parts_name, lifetime, parts_generics) = parts::prepare(&input);
+    let (_, parts_ty_generics, parts_where_clause) = parts_generics.split_for_impl();
+
+    let parts = input.fields.iter().enumerate().map(|(i, field)| {
+        let variant = parts::variant_name(i, field);
+        let ty = &field.ty;
+
+        let data = match util::unwrap_option_type(ty) {
+            Some(optional) => quote!(::std::option::Option<::phenix_runtime::bytes::ByteSlice<#lifetime, #optional>>),
+            None => quote!(::phenix_runtime::bytes::ByteSlice<#lifetime, #ty>),
+        };
+
+        quote!(#variant(#data))
+    });
+
+    let recognize_by_parts = parts::impl_recognize_by_parts(&item, is_exhaustive);
+
+    let expanded = quote! {
+        #item
+
+        #[derive(Debug)]
+        pub enum #parts_name #parts_ty_generics #parts_where_clause {
+            #(#parts),*
+        }
+
+        impl #impl_generics #name #ty_generics #where_clause {
+            pub fn recognize_by_parts<'input, #lifetime>(
+                bytes: &'input mut ::phenix_runtime::bytes::Bytes<#lifetime>,
+                buf: &'input mut ::std::vec::Vec<u8>
+            ) -> impl ::std::iter::Iterator<Item = ::std::result::Result<#parts_name #parts_ty_generics, ::phenix_runtime::DecodingError>> + 'input
+            where
+                Self: ::phenix_runtime::Decodable
+            {
+                #recognize_by_parts
             }
         }
     };

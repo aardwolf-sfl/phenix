@@ -76,6 +76,7 @@ impl Generator {
 
     fn generate_struct_type(&self, content: &mut String, module: ModuleId, ty: &StructType) {
         content.push_str("#[derive(Encodable, Decodable, Debug, Clone, PartialEq)]");
+        content.push_str("#[phenix_runtime::by_parts]");
 
         self.generate_attributes(content, &ty.attrs);
 

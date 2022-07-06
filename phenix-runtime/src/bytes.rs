@@ -127,8 +127,4 @@ impl<T> ByteSpan<T> {
             ty: PhantomData,
         }
     }
-
-    pub(crate) fn offset(&self) -> usize {
-        self.offset
-    }
 }

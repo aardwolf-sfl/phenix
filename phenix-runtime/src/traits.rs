@@ -71,7 +71,7 @@ impl<T: Decodable> ByteSlice<'_, T> {
 
 impl<T: Decodable> ByteSpan<T> {
     pub fn decode(&self, origin: &[u8], buf: &mut Vec<u8>) -> Result<T, DecodingError> {
-        let mut bytes = Bytes::with_consumed(self.as_bytes(origin), self.offset());
+        let mut bytes = Bytes::new(self.as_bytes(origin));
         T::decode(&mut bytes, buf)
     }
 
@@ -82,7 +82,7 @@ impl<T: Decodable> ByteSpan<T> {
         n: usize,
         values: &mut Vec<T>,
     ) -> Result<(), DecodingError> {
-        let mut bytes = Bytes::with_consumed(self.as_bytes(origin), self.offset());
+        let mut bytes = Bytes::new(self.as_bytes(origin));
         T::decode_many(&mut bytes, buf, n, values)
     }
 }

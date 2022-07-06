@@ -2,7 +2,7 @@ use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{quote, ToTokens};
 use syn::{
     parse_quote, punctuated::Punctuated, DeriveInput, Fields, GenericParam, Generics, Ident, Type,
-    TypePath, Variant,
+    TypePath, Variant, ItemStruct,
 };
 
 pub enum TypeKind {
@@ -17,12 +17,45 @@ pub fn is_exhaustive(input: &DeriveInput) -> bool {
         .any(|attr| attr.path.is_ident("non_exhaustive"))
 }
 
+pub fn is_exhaustive_struct(input: &ItemStruct) -> bool {
+    !input
+        .attrs
+        .iter()
+        .any(|attr| attr.path.is_ident("non_exhaustive"))
+}
+
 pub fn add_trait_bounds(mut generics: Generics, trait_ty: TypePath) -> Generics {
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
             type_param.bounds.push(parse_quote!(#trait_ty));
         }
     }
+
+    generics
+}
+
+pub fn add_generic_param(mut generics: Generics, param: GenericParam) -> Generics {
+    match param {
+        GenericParam::Type(_) | GenericParam::Const(_) => generics.params.push(param),
+        GenericParam::Lifetime(_) => {
+            let after_last_lt = generics
+                .params
+                .iter()
+                .enumerate()
+                .rev()
+                .find_map(|(i, p)| {
+                    if matches!(p, GenericParam::Lifetime(_)) {
+                        Some(i + 1)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap_or(0);
+
+            generics.params.insert(after_last_lt, param);
+        }
+    }
+
     generics
 }
 

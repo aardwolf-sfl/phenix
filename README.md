@@ -22,7 +22,7 @@ struct Person {
     age: uint,
     // Encoded as bit vector
     working_hours: vector<bool>,
-    // Encode new items one by one without knowing the final count
+    // Append new items one by one without knowing the final count
     projects: stream<string>,
 }
 
@@ -46,7 +46,7 @@ flags Color {
 
 * Convenient schema language from which the compiler can generate code for various programming languages
 * Space-efficient encoding without reaching for generic, computationally expensive compression algorithms
-* Lazy deserialization -- fast recognition of value's byte range without actually materializing it
+* Lazy deserialization -- fast recognition of value's byte range without actually materializing it ([example](phenix-runtime/examples/lazy.rs))
 * Stream-like serialization (and deserialization) -- continuously encode values one by one without the need of initializing the whole collection
 
 ## Non-goals

@@ -9,7 +9,7 @@ pub mod traits;
 
 mod imp;
 
-pub use phenix_runtime_macros::{Decodable, Encodable, IsFlag};
+pub use phenix_runtime_macros::{by_parts, Decodable, Encodable, IsFlag};
 pub use traits::{Decodable, Encodable, IsFlag};
 
 pub mod prelude {
