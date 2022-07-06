@@ -9,7 +9,7 @@ use crate::{
 impl<T: IsFlag> Encodable for Flags<T> {
     fn encode<W: io::Write>(&self, writer: &mut W) -> io::Result<()> {
         if !T::IS_EXHAUSTIVE {
-            base::utils::encode_items_count_relaxed(self.flags.len(), writer)?;
+            base::utils::encode_discriminant_relaxed(self.flags.len(), writer)?;
         }
 
         writer.write_all(self.flags.as_slice())
@@ -44,7 +44,7 @@ impl<T: IsFlag> Decodable for Flags<T> {
         let n_bytes = if T::IS_EXHAUSTIVE {
             Self::n_bytes()
         } else {
-            base::utils::decode_items_count_relaxed(bytes, buf)?
+            base::utils::decode_discriminant_relaxed(bytes, buf)?
         };
 
         if bytes.len() >= n_bytes {

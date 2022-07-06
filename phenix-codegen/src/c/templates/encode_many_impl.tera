@@ -1,0 +1,12 @@
+int {{ name }}_encode_many(const {{ keyword }} {{ name }}__ *values, size_t n, FILE *stream)
+{
+    int ret;
+
+    for (size_t i = 0; i < n; i++)
+    {
+        ret = {{ name }}_encode(&values[i], stream);
+        if (ret != 0) return ret;
+    }
+
+    return 0;
+}

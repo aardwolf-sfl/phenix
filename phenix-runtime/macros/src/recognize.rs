@@ -47,7 +47,9 @@ pub fn recognize_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> 
         body.extend(recognize_field);
     }
 
-    body.extend(quote!(::std::result::Result::Ok(bytes.take_slice_from(mark))));
+    body.extend(quote!(::std::result::Result::Ok(
+        bytes.take_slice_from(mark)
+    )));
     body
 }
 
@@ -62,7 +64,7 @@ pub fn recognize_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> Toke
     body.extend(quote!(let mark = bytes.mark();));
 
     body.extend(
-        quote!(let discriminant = ::phenix_runtime::base::utils::decode_items_count(bytes)?;),
+        quote!(let discriminant = ::phenix_runtime::base::utils::decode_discriminant(bytes)?;),
     );
 
     let mut match_body = TokenStream2::new();

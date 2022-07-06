@@ -75,7 +75,7 @@ pub fn decode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
     let mut body = TokenStream2::new();
 
     body.extend(
-        quote!(let discriminant = ::phenix_runtime::base::utils::decode_items_count(bytes)?;),
+        quote!(let discriminant = ::phenix_runtime::base::utils::decode_discriminant(bytes)?;),
     );
 
     let mut match_body = TokenStream2::new();

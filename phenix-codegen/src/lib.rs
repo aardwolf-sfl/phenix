@@ -3,18 +3,21 @@ use serde::{Deserialize, Serialize};
 
 pub(crate) mod shared;
 
+mod c;
 mod rust;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Language {
     Rust,
+    C,
 }
 
 impl Language {
     pub fn extension(&self) -> &str {
         match self {
             Language::Rust => "rs",
+            Language::C => "c",
         }
     }
 }
@@ -24,6 +27,7 @@ pub fn generate(project: Project, lang: Language) -> String {
 
     match lang {
         Language::Rust => rust::generate(ctx),
+        Language::C => c::generate(ctx),
     }
 }
 

@@ -255,20 +255,22 @@ impl<T: IsFlag> Default for Flags<T> {
 }
 
 impl<T: IsFlag> Flags<T> {
-    pub fn set(&mut self, flag: T) {
+    pub fn set(&mut self, flag: T) -> &mut Self {
         if !T::IS_EXHAUSTIVE {
             self.reserve(flag.bit_index());
         }
 
         base::utils::set_bit_at(flag.bit_index(), &mut self.flags);
+        self
     }
 
-    pub fn clear(&mut self, flag: T) {
+    pub fn unset(&mut self, flag: T) -> &mut Self {
         if !T::IS_EXHAUSTIVE {
             self.reserve(flag.bit_index());
         }
 
         base::utils::clear_bit_at(flag.bit_index(), &mut self.flags);
+        self
     }
 
     pub fn is_set(&self, flag: T) -> bool {

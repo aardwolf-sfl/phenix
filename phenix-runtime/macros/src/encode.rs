@@ -73,7 +73,7 @@ pub fn encode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
         let discriminant = match self {
             #match_body
         };
-        ::phenix_runtime::base::utils::encode_items_count(discriminant, writer)?;
+        ::phenix_runtime::base::utils::encode_discriminant(discriminant, writer)?;
     });
 
     match_body = TokenStream2::new();

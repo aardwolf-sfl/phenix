@@ -1,0 +1,16 @@
+[package]
+name = "phenix-capi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "phenix"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+libc = "0.2"
+
+phenix-runtime = { path = "../phenix-runtime" }
+
+[build-dependencies]
+cbindgen = { version = "0.24", default-features = false }

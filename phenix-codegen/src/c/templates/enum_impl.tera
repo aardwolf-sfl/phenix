@@ -1,0 +1,78 @@
+// === DECLARATION:BEGIN
+{%- if has_data %}
+typedef union {{ name }}__
+{
+    enum
+    {
+{%- for variant in variants %}
+        {{ name }}_{{ variant.name }},
+{%- endfor %}
+    } tag_;
+{%- for variant in variants %}
+{%- if variant.has_data %}
+    struct
+    {
+{%- for field in variant.fields %}
+        {{ field.ty.c_name }} {{ field.name }};
+{%- endfor %}
+    } {{ variant.name }};
+{%- endif %}
+{%- endfor %}
+} {{ name }}_t;
+{%- set keyword = "union" %}
+{%- else %}
+{%- set keyword = "enum" %}
+{%- endif %}
+
+// === DECLARATION:END
+
+int {{ name }}_encode(const {{ keyword }} {{ name }}__ *value, FILE *stream)
+{
+    int ret;
+    size_t discriminant;
+
+{% if has_data %}
+    switch (value->tag_)
+    {
+{%- for variant in variants %}
+        case {{ name }}_{{ variant.name }}:
+            discriminant = {{ loop.index0 }};
+            break;
+{% endfor %}
+        default:
+            return 1;
+    }
+{% else %}
+    switch (*value)
+    {
+{%- for variant in variants %}
+        case {{ name }}_{{ variant.name }}:
+            discriminant = {{ loop.index0 }};
+            break;
+{% endfor %}
+        default:
+            return 1;
+    }
+{% endif %}
+
+    ret = phenix_runtime_encode_discriminant(discriminant, stream);
+    if (ret != 0) return ret;
+
+{% if has_data %}
+    switch (value->tag_)
+    {
+{%- for variant in variants %}
+        case {{ name }}_{{ variant.name }}:
+{%- for field in variant.fields %}
+            ret = {{ field.ty.rt_prefix }}{{ field.ty.rt_name }}_encode({% if field.ty.by_ref %}&{% endif %}value->{{ variant.name }}.{{ field.name }}, stream);
+            if (ret != 0) return ret;
+{%- endfor %}
+            break;
+{% endfor %}
+        default:
+            return 1;
+    }
+{%- endif %}
+
+    return 0;
+}

@@ -1,0 +1,6 @@
+// === DECLARATION:BEGIN
+struct {{ name }}__;
+
+int {{ name }}_encode(const struct {{ name }}__ *value, FILE *stream);
+int {{ name }}_encode_many(const struct {{ name }}__ *values, size_t n, FILE *stream);
+// === DECLARATION:END

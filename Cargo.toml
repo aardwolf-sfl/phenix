@@ -5,5 +5,6 @@ members = [
     "phenix-codegen",
     "phenix-compiler",
     "phenix-runtime",
-    "phenix-runtime/macros"
+    "phenix-runtime/macros",
+    "phenix-capi",
 ]

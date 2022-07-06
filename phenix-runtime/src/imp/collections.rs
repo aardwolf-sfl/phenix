@@ -40,6 +40,15 @@ impl<T: Decodable> Decodable for Vec<T> {
     }
 }
 
+impl<T: Encodable> Encodable for &[T] {
+    fn encode<W: io::Write>(&self, writer: &mut W) -> io::Result<()> {
+        let len = self.len() as u64;
+        base::uint::encode(len, writer)?;
+
+        T::encode_many(self, writer)
+    }
+}
+
 impl<T> Encodable for Stream<T> {
     fn encode<W: io::Write>(&self, _: &mut W) -> io::Result<()> {
         Ok(())

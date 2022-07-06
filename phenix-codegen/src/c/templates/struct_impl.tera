@@ -1,0 +1,18 @@
+// === DECLARATION:BEGIN
+typedef struct {{ name }}__
+{
+{%- for field in fields %}
+    {{ field.ty.c_name }} {{ field.name }};
+{%- endfor %}
+} {{ name }}_t;
+// === DECLARATION:END
+
+int {{ name }}_encode(const struct {{ name }}__ *value, FILE *stream)
+{
+    int ret;
+{% for field in fields %}
+    ret = {{ field.ty.rt_prefix }}{{ field.ty.rt_name }}_encode({% if field.ty.by_ref %}&{% endif %}value->{{ field.name }}, stream);
+    if (ret != 0) return ret;
+{% endfor %}
+    return 0;
+}

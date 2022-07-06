@@ -1,0 +1,17 @@
+// === DECLARATION:BEGIN
+{%- if has_data %}
+union {{ name }}__;
+{%- set keyword = "union" %}
+{%- else %}
+typedef enum {{ name }}__
+{
+{%- for variant in variants %}
+    {{ name }}_{{ variant.name }},
+{%- endfor %}
+} {{ name }}_t;
+{%- set keyword = "enum" %}
+{%- endif %}
+
+int {{ name }}_encode(const {{ keyword }} {{ name }}__ *value, FILE *stream);
+int {{ name }}_encode_many(const {{ keyword }} {{ name }}__ *values, size_t n, FILE *stream);
+// === DECLARATION:END

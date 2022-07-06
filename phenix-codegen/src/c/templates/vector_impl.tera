@@ -1,0 +1,25 @@
+// === DECLARATION:BEGIN
+typedef struct {{ name }}__
+{
+    const {{ c_name }} *ptr;
+    size_t len;
+} {{ name }}_t;
+
+void {{ name }}_init(struct {{ name }}__ *self, const {{ c_name }} *ptr, size_t len);
+// === DECLARATION:END
+
+void {{ name }}_init(struct {{ name }}__ *self, const {{ c_name }} *ptr, size_t len)
+{
+    self->ptr = ptr;
+    self->len = len;
+}
+
+int {{ name }}_encode(const struct {{ name }}__ *value, FILE *stream)
+{
+    int ret;
+
+    ret = phenix_runtime_uint_encode(value->len, stream);
+    if (ret != 0) return ret;
+
+    return {{ rt_prefix }}{{ rt_name }}_encode_many(value->ptr, value->len, stream);
+}

@@ -1,0 +1,21 @@
+// === DECLARATION:BEGIN
+typedef enum
+{
+{%- for flag in flags %}
+    {{ name | upper }}_{{ flag }} = {{ loop.index0 }},
+{%- endfor %}
+} {{ name }}_flag;
+
+typedef struct {{ name }}__
+{
+    uint8_t __raw[{{ n_bytes }}];
+} {{ name }}_t;
+
+void {{ name }}_init(struct {{ name }}__ *value);
+void {{ name }}_set(struct {{ name }}__ *value, {{ name }}_flag flag);
+void {{ name }}_unset(struct {{ name }}__ *value, {{ name }}_flag flag);
+bool {{ name }}_is_set(const struct {{ name }}__ *value, {{ name }}_flag flag);
+
+int {{ name }}_encode(const struct {{ name }}__ *value, FILE *stream);
+int {{ name }}_encode_many(const struct {{ name }}__ *values, size_t n, FILE *stream);
+// === DECLARATION:END

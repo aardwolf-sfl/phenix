@@ -140,6 +140,15 @@ impl Decodable for String {
     }
 }
 
+impl Encodable for &str {
+    fn encode<W: io::Write>(&self, writer: &mut W) -> io::Result<()> {
+        let len = self.len() as u64;
+        base::uint::encode(len, writer)?;
+
+        writer.write_all(self.as_bytes())
+    }
+}
+
 impl Encodable for Uint {
     fn encode<W: io::Write>(&self, writer: &mut W) -> io::Result<()> {
         base::uint::encode(self.0, writer)

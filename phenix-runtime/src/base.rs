@@ -429,12 +429,12 @@ pub mod bool {
 pub mod utils {
     use super::*;
 
-    pub fn encode_items_count<W: io::Write>(n: usize, writer: &mut W) -> io::Result<()> {
+    pub fn encode_discriminant<W: io::Write>(n: usize, writer: &mut W) -> io::Result<()> {
         let n = u8::try_from(n).expect("by default types can only have up to 255 items");
         writer.write_all(&[n])
     }
 
-    pub fn decode_items_count(bytes: &mut Bytes<'_>) -> Result<usize, DecodingError> {
+    pub fn decode_discriminant(bytes: &mut Bytes<'_>) -> Result<usize, DecodingError> {
         if bytes.len() > 0 {
             let n = bytes[0] as usize;
             bytes.consume(1);
@@ -444,11 +444,11 @@ pub mod utils {
         }
     }
 
-    pub fn encode_items_count_relaxed<W: io::Write>(n: usize, writer: &mut W) -> io::Result<()> {
+    pub fn encode_discriminant_relaxed<W: io::Write>(n: usize, writer: &mut W) -> io::Result<()> {
         super::uint::encode(n as u64, writer)
     }
 
-    pub fn decode_items_count_relaxed(
+    pub fn decode_discriminant_relaxed(
         bytes: &mut Bytes<'_>,
         buf: &mut Vec<u8>,
     ) -> Result<usize, DecodingError> {

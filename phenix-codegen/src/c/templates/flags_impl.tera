@@ -1,0 +1,42 @@
+void {{ name }}_init(struct {{ name }}__ *value)
+{
+    memset((void*)value->__raw, 0, sizeof(value->__raw));
+}
+
+void {{ name }}_set(struct {{ name }}__ *value, {{ name }}_flag flag)
+{
+    size_t div = (size_t)flag / 8;
+    uint8_t rem = (uint8_t)((size_t)flag % 8);
+
+    uint8_t mask = 1 << rem;
+    value->__raw[div] |= mask;
+}
+
+void {{ name }}_unset(struct {{ name }}__ *value, {{ name }}_flag flag)
+{
+    size_t div = (size_t)flag / 8;
+    uint8_t rem = (uint8_t)((size_t)flag % 8);
+
+    uint8_t mask = ~(1 << rem);
+    value->__raw[div] &= mask;
+}
+
+bool {{ name }}_is_set(const struct {{ name }}__ *value, {{ name }}_flag flag)
+{
+    size_t div = (size_t)flag / 8;
+    uint8_t rem = (uint8_t)((size_t)flag % 8);
+
+    return ((value->__raw[div] >> rem) & 0x01) != 0;
+}
+
+int {{ name }}_encode(const struct {{ name }}__ *value, FILE *stream)
+{
+{%- if not is_exhaustive %}
+    int ret;
+
+    ret = phenix_runtime_encode_discriminant(sizeof(value->__raw), stream)
+    if (ret != 0) return ret;
+{%- endif %}
+    fwrite((void*)value->__raw, 1, sizeof(value->__raw), stream);
+    return ferror(stream);
+}

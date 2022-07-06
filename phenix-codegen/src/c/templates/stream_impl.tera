@@ -1,0 +1,8 @@
+// === DECLARATION:BEGIN
+typedef void* {{ name }}_t;
+// === DECLARATION:END
+
+int {{ name }}_push_encode(const {{ c_name }} *value, FILE *stream)
+{
+    return {{ rt_prefix }}{{ rt_name }}_encode(value, stream);
+}

@@ -179,7 +179,7 @@ impl Generator {
             TypeId::User(id) => {
                 let current_module = self.ctx.module(module).unwrap();
                 let source_module = self.ctx.find_module(id).unwrap();
-                let user_ty = source_module.types.iter().find(|ty| ty.id() == id).unwrap();
+                let user_ty = self.ctx.find_type(id).unwrap();
 
                 if source_module != current_module {
                     self.generate_relative_path(content, current_module, source_module);
