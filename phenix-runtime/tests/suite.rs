@@ -311,6 +311,9 @@ where
                     assert_eq!(values, expected);
                 }
             }
+
+            // All bytes consumed.
+            assert!(bytes.is_empty());
         }
 
         for error in suite.errors {
@@ -357,6 +360,9 @@ where
                     assert_eq!(values, expected);
                 }
             }
+
+            // All bytes consumed.
+            assert!(bytes.is_empty());
         }
 
         for error in suite.errors {

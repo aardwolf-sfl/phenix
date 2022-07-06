@@ -21,19 +21,18 @@ impl<T: IsFlag> Decodable for Flags<T> {
         let n_bytes = if T::IS_EXHAUSTIVE {
             Self::n_bytes()
         } else {
-            base::utils::decode_items_count_relaxed(bytes, buf)?
+            base::utils::decode_discriminant_relaxed(bytes, buf)?
         };
 
-        if bytes.len() >= n_bytes {
-            let flags = bytes[..n_bytes].to_vec();
+        let flags = bytes
+            .consume_bytes(n_bytes)
+            .ok_or_else(|| UnexpectedEof::new(bytes))?
+            .to_vec();
 
-            Ok(Self {
-                flags,
-                ty: PhantomData,
-            })
-        } else {
-            Err(UnexpectedEof::new(bytes).into())
-        }
+        Ok(Self {
+            flags,
+            ty: PhantomData,
+        })
     }
 
     fn recognize<'a>(

@@ -57,9 +57,7 @@ pub mod uint {
         }
 
         bytes.consume(1);
-
-        buf[..n_bytes].copy_from_slice(&bytes[..n_bytes]);
-        bytes.consume(n_bytes);
+        buf[..n_bytes].copy_from_slice(bytes.consume_bytes(n_bytes).unwrap());
 
         Ok(u64::from_le_bytes(buf.as_slice().try_into().unwrap()))
     }
@@ -331,16 +329,17 @@ pub mod bool {
         n: usize,
         values: &mut Vec<bool>,
     ) -> Result<(), DecodingError> {
-        let (n_bytes, div, rem) = byte_size_extra(n);
-
-        if bytes.len() < n_bytes {
-            return Err(UnexpectedEof::new(bytes).into());
-        }
-
-        if n_bytes == 0 {
+        if n == 0 {
             return Ok(());
         }
 
+        let (n_bytes, div, rem) = byte_size_extra(n);
+
+        let bytes = bytes
+            .consume_bytes(n_bytes)
+            .ok_or_else(|| UnexpectedEof::new(bytes))?;
+
+        // Iterate over bytes, but ignore the last byte if it is "incomplete".
         for mut byte in bytes.iter().copied().take(div) {
             for _ in 0..u8::BITS {
                 values.push(byte & 0x01 != 0);
@@ -349,6 +348,7 @@ pub mod bool {
         }
 
         if rem > 0 {
+            // Process the incomplete byte.
             let mut byte = bytes[div];
 
             for _ in 0..rem {
@@ -357,7 +357,6 @@ pub mod bool {
             }
         }
 
-        bytes.consume(n_bytes);
         Ok(())
     }
 

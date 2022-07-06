@@ -105,10 +105,6 @@ impl<'a, T> ByteSlice<'a, T> {
             ty: PhantomData,
         }
     }
-
-    pub(crate) fn offset(&self) -> usize {
-        self.offset
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

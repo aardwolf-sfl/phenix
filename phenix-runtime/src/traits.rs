@@ -54,7 +54,7 @@ pub trait Decodable: Sized {
 
 impl<T: Decodable> ByteSlice<'_, T> {
     pub fn decode(&self, buf: &mut Vec<u8>) -> Result<T, DecodingError> {
-        let mut bytes = Bytes::with_consumed(self.as_bytes(), self.offset());
+        let mut bytes = Bytes::new(self.as_bytes());
         T::decode(&mut bytes, buf)
     }
 
@@ -64,7 +64,7 @@ impl<T: Decodable> ByteSlice<'_, T> {
         n: usize,
         values: &mut Vec<T>,
     ) -> Result<(), DecodingError> {
-        let mut bytes = Bytes::with_consumed(self.as_bytes(), self.offset());
+        let mut bytes = Bytes::new(self.as_bytes());
         T::decode_many(&mut bytes, buf, n, values)
     }
 }

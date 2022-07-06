@@ -110,21 +110,15 @@ impl Encodable for String {
 impl Decodable for String {
     fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
         let len = base::uint::decode(bytes, buf).map_err(|_| InvalidPrefix::new(bytes))?;
-        let len = len as usize;
+        let mark = bytes.mark();
 
-        if bytes.len() < len {
-            return Err(UnexpectedEof::new(bytes).into());
-        }
+        let bytes = bytes
+            .consume_bytes(len as usize)
+            .ok_or_else(|| UnexpectedEof::new(bytes))?;
 
-        match std::str::from_utf8(&bytes[..len]) {
-            Ok(string) => {
-                let string = string.to_string();
-                bytes.consume(len);
-                Ok(string)
-            }
-            Err(error) => {
-                Err(ValueError::new_at(bytes.mark().to_usize() + error.valid_up_to()).into())
-            }
+        match std::str::from_utf8(bytes) {
+            Ok(string) => Ok(string.to_string()),
+            Err(error) => Err(ValueError::new_at(mark.to_usize() + error.valid_up_to()).into()),
         }
     }
 
