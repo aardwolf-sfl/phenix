@@ -181,10 +181,29 @@ impl From<Float> for f64 {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Stream<T> {
     offset: usize,
     ty: PhantomData<fn() -> T>,
+}
+
+impl<T> Stream<T> {
+    // Primarily for usage in tests.
+    pub fn with_offset(offset: usize) -> Self {
+        Self {
+            offset,
+            ty: PhantomData,
+        }
+    }
+}
+
+impl<T> Default for Stream<T> {
+    fn default() -> Self {
+        Self {
+            offset: 0,
+            ty: PhantomData,
+        }
+    }
 }
 
 impl<T: Encodable> Stream<T> {

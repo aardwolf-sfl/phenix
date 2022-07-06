@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-pub use phenix_codegen::Language;
+use phenix_codegen::Language;
 
 #[derive(Debug, Default, Clone)]
 pub struct Config {

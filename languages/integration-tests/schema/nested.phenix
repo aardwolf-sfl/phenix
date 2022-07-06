@@ -1,0 +1,45 @@
+flags Country {
+    AUSTRIA,
+    BELGIUM,
+    BULGARIA,
+    CROATIA,
+    CYPRUS,
+    CZECH_REPUBLIC,
+    DENMARK,
+    ESTONIA,
+    FINLAND,
+    FRANCE,
+    GERMANY,
+    GREECE,
+    HUNGARY,
+    IRELAND,
+    ITALY,
+    LATVIA,
+    LITHUANIA,
+    LUXEMBOURG,
+    MALTA,
+    THE_NETHERLANDS,
+    POLAND,
+    PORTUGAL,
+    ROMANIA,
+    SLOVAKIA,
+    SLOVENIA,
+    SPAIN,
+    SWEDEN,
+}
+
+enum Pronoun {
+    He,
+    She,
+    They,
+    Him,
+    Her,
+    Them,
+}
+
+enum DegreeName {
+    Bachelor,
+    Master,
+    Doctor,
+    Professor,
+}

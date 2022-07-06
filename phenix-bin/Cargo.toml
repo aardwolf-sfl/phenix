@@ -1,0 +1,16 @@
+[package]
+name = "phenix-bin"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "phenix"
+path = "src/main.rs"
+test = false
+bench = false
+
+[dependencies]
+clap = { version = "3", features = ["derive"] }
+
+phenix-compiler = { path = "../phenix-compiler" }
+phenix-codegen = { path = "../phenix-codegen" }

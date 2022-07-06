@@ -1,10 +1,15 @@
 [workspace]
 
 members = [
+    "phenix-bin",
     "phenix-build",
     "phenix-codegen",
     "phenix-compiler",
     "phenix-runtime",
     "phenix-runtime/macros",
     "phenix-capi",
+]
+
+exclude = [
+    "languages/integration-tests",
 ]

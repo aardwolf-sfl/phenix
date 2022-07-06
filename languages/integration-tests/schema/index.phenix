@@ -1,0 +1,28 @@
+import * from "nested.phenix"
+
+struct Person {
+    name: string,
+    age: uint,
+    pronouns: Pronouns,
+    degree: Degree,
+    citizenship: Country,
+    working_hours: vector<bool>,
+    projects: stream<Project>,
+}
+
+struct Pronouns {
+    subject: Pronoun,
+    object: Pronoun,
+}
+
+enum Degree {
+    None,
+    Highest {
+        name: DegreeName,
+    }
+}
+
+struct Project {
+    name: string,
+    url: string,
+}

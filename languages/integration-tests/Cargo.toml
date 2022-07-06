@@ -1,0 +1,12 @@
+[package]
+name = "phenix-languages-integration-tests"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tempfile = "3"
+
+phenix-runtime = { path = "../../phenix-runtime" }
+
+[build-dependencies]
+phenix-build = { path = "../../phenix-build" }

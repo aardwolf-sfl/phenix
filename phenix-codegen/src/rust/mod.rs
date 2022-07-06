@@ -75,7 +75,7 @@ impl Generator {
     }
 
     fn generate_struct_type(&self, content: &mut String, module: ModuleId, ty: &StructType) {
-        content.push_str("#[derive(Encodable, Decodable, Debug, Clone)]");
+        content.push_str("#[derive(Encodable, Decodable, Debug, Clone, PartialEq)]");
 
         self.generate_attributes(content, &ty.attrs);
 
@@ -84,14 +84,14 @@ impl Generator {
         content.push_str(" {");
 
         for field in ty.fields.iter() {
-            self.generate_field(content, module, field);
+            self.generate_field(content, module, field, true);
         }
 
         content.push('}');
     }
 
     fn generate_enum_type(&self, content: &mut String, module: ModuleId, ty: &EnumType) {
-        content.push_str("#[derive(Encodable, Decodable, Debug, Clone)]");
+        content.push_str("#[derive(Encodable, Decodable, Debug, Clone, PartialEq)]");
 
         self.generate_attributes(content, &ty.attrs);
 
@@ -107,7 +107,7 @@ impl Generator {
     }
 
     fn generate_flags_type(&self, content: &mut String, ty: &FlagsType) {
-        content.push_str("#[derive(IsFlag, Debug, Clone, Copy)]");
+        content.push_str("#[derive(IsFlag, Debug, Clone, Copy, PartialEq)]");
 
         self.generate_attributes(content, &ty.attrs);
 
@@ -134,7 +134,11 @@ impl Generator {
         content.push_str(">;");
     }
 
-    fn generate_field(&self, content: &mut String, module: ModuleId, field: &Field) {
+    fn generate_field(&self, content: &mut String, module: ModuleId, field: &Field, vis: bool) {
+        if vis {
+            content.push_str("pub ");
+        }
+
         content.push_str(&field.name.to_case(Case::Snake));
         content.push(':');
         self.generate_type(content, module, &field.ty);
@@ -148,7 +152,7 @@ impl Generator {
             content.push_str(" {");
 
             for field in variant.fields.iter() {
-                self.generate_field(content, module, field);
+                self.generate_field(content, module, field, false);
             }
 
             content.push('}');
