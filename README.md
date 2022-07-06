@@ -1,18 +1,46 @@
 # phenix
 
-**Phenix** is<sup>1</sup> schema-based, language-neutral<sup>2</sup>
-encoding/decoding tool with focus on compact format, lazy deserialization and
-support for stream-like serialization. It targets design and implementation of
-stable-ish file formats rather than extensible data interchange protocols, which
-has its consequences (see goals and non-goals).
+**Phenix** is schema-based, language-neutral<sup>1</sup> encoding/decoding tool
+with focus on compact format, lazy deserialization and support for stream-like
+serialization. It targets design and implementation of stable-ish file formats
+rather than extensible data interchange protocols, which has its consequences
+(see goals and non-goals).
 
 Supported languages:
 
 * **Rust**
+* C (encoding only)
 
-<sup>1</sup> *At this point not really, but hopefully will.*
+<sup>1</sup> *The near-future focus will be on encoders, not necessarily decoders.*
 
-<sup>2</sup> *The near-future focus will be on encoders, not necessarily decoders.*
+## Example
+
+```
+struct Person {
+    name: string,
+    // Space-efficient encoding for integers and floats
+    age: uint,
+    // Encoded as bit vector
+    working_hours: vector<bool>,
+    // Encode new items one by one without knowing the final count
+    projects: stream<string>,
+}
+
+enum Salutation {
+    None,
+    Some {
+        // Enum variants can have data
+        text: string,
+    }
+}
+
+// Built-in bitflags type
+flags Color {
+    RED,
+    GREEN,
+    BLUE,
+}
+```
 
 ## Goals
 
