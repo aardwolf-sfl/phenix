@@ -16,17 +16,14 @@ macro_rules! impl_num {
         }
 
         impl Decodable for $num {
-            fn decode(bytes: &mut Bytes<'_>, _: &mut Vec<u8>) -> Result<Self, DecodingError> {
+            fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
                 bytes
                     .consume_bytes(mem::size_of::<$num>())
                     .map(|bytes| <$num>::from_le_bytes(bytes.try_into().unwrap()))
                     .ok_or_else(|| UnexpectedEof::new(bytes).into())
             }
 
-            fn recognize<'a>(
-                bytes: &mut Bytes<'a>,
-                _: &mut Vec<u8>,
-            ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+            fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
                 bytes
                     .consume_slice(mem::size_of::<$num>())
                     .ok_or_else(|| UnexpectedEof::new(bytes).into())
@@ -34,7 +31,6 @@ macro_rules! impl_num {
 
             fn recognize_many<'a>(
                 bytes: &mut Bytes<'a>,
-                _: &mut Vec<u8>,
                 n: usize,
             ) -> Result<ByteSlice<'a, Self>, DecodingError> {
                 bytes
@@ -69,20 +65,16 @@ impl Encodable for bool {
 }
 
 impl Decodable for bool {
-    fn decode(bytes: &mut Bytes<'_>, _: &mut Vec<u8>) -> Result<Self, DecodingError> {
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
         base::bool::decode(bytes)
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         base::bool::recognize(bytes)
     }
 
     fn decode_many<'a>(
         bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
         n: usize,
         values: &mut Vec<Self>,
     ) -> Result<(), DecodingError> {
@@ -91,7 +83,6 @@ impl Decodable for bool {
 
     fn recognize_many<'a>(
         bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
         n: usize,
     ) -> Result<ByteSlice<'a, Self>, DecodingError> {
         base::bool::recognize_many(bytes, n)
@@ -108,8 +99,8 @@ impl Encodable for String {
 }
 
 impl Decodable for String {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
-        let len = base::uint::decode(bytes, buf).map_err(|_| InvalidPrefix::new(bytes))?;
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
+        let len = base::uint::decode(bytes).map_err(|_| InvalidPrefix::new(bytes))?;
         let mark = bytes.mark();
 
         let bytes = bytes
@@ -122,13 +113,10 @@ impl Decodable for String {
         }
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        buf: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         let mark = bytes.mark();
 
-        let len = base::uint::decode(bytes, buf).map_err(|_| InvalidPrefix::new(bytes))?;
+        let len = base::uint::decode(bytes).map_err(|_| InvalidPrefix::new(bytes))?;
         let len = len as usize;
 
         if bytes.len() < len {
@@ -156,14 +144,11 @@ impl Encodable for Uint {
 }
 
 impl Decodable for Uint {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
-        base::uint::decode(bytes, buf).map(Uint)
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
+        base::uint::decode(bytes).map(Uint)
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         base::uint::recognize(bytes).map(ByteSlice::cast)
     }
 }
@@ -175,14 +160,11 @@ impl Encodable for Sint {
 }
 
 impl Decodable for Sint {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
-        base::sint::decode(bytes, buf).map(Sint)
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
+        base::sint::decode(bytes).map(Sint)
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         base::sint::recognize(bytes).map(ByteSlice::cast)
     }
 }
@@ -194,14 +176,11 @@ impl Encodable for Float {
 }
 
 impl Decodable for Float {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
-        base::float::decode(bytes, buf).map(Float)
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
+        base::float::decode(bytes).map(Float)
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        _: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         base::float::recognize(bytes).map(ByteSlice::cast)
     }
 }

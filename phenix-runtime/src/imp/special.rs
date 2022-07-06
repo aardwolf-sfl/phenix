@@ -17,11 +17,11 @@ impl<T: IsFlag> Encodable for Flags<T> {
 }
 
 impl<T: IsFlag> Decodable for Flags<T> {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError> {
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError> {
         let n_bytes = if T::IS_EXHAUSTIVE {
             Self::n_bytes()
         } else {
-            base::utils::decode_discriminant_relaxed(bytes, buf)?
+            base::utils::decode_discriminant_relaxed(bytes)?
         };
 
         let flags = bytes
@@ -35,16 +35,13 @@ impl<T: IsFlag> Decodable for Flags<T> {
         })
     }
 
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        buf: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError> {
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError> {
         let mark = bytes.mark();
 
         let n_bytes = if T::IS_EXHAUSTIVE {
             Self::n_bytes()
         } else {
-            base::utils::decode_discriminant_relaxed(bytes, buf)?
+            base::utils::decode_discriminant_relaxed(bytes)?
         };
 
         if bytes.len() >= n_bytes {

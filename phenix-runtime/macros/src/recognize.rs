@@ -34,14 +34,14 @@ pub fn recognize_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> 
             Some(option_ty) => {
                 let recognize_field = quote! {
                     if ::phenix_runtime::base::utils::test_bit_at(#optional_bit, optional) {
-                        <#option_ty>::recognize(bytes, buf)?;
+                        <#option_ty>::recognize(bytes)?;
                     }
                 };
 
                 optional_bit += 1;
                 recognize_field
             }
-            None => quote!(<#field_ty>::recognize(bytes, buf)?;),
+            None => quote!(<#field_ty>::recognize(bytes)?;),
         };
 
         body.extend(recognize_field);
@@ -80,7 +80,7 @@ pub fn recognize_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> Toke
 
         let recognize_fields = variant.fields.iter().map(|field| {
             let field_ty = &field.ty;
-            quote!(<#field_ty>::recognize(bytes, buf)?;)
+            quote!(<#field_ty>::recognize(bytes)?;)
         });
 
         match_body.extend(quote! {

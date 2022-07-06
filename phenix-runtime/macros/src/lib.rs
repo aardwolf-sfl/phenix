@@ -89,14 +89,12 @@ pub fn decodable(tokens: TokenStream) -> TokenStream {
         impl #impl_generics ::phenix_runtime::Decodable for #name #ty_generics #where_clause {
             fn decode(
                 bytes: &mut ::phenix_runtime::bytes::Bytes<'_>,
-                buf: &mut ::std::vec::Vec<u8>,
             ) -> ::std::result::Result<Self, ::phenix_runtime::DecodingError> {
                 #decode_body
             }
 
             fn recognize<'a>(
                 bytes: &mut ::phenix_runtime::bytes::Bytes<'a>,
-                buf: &mut ::std::vec::Vec<u8>,
             ) -> ::std::result::Result<::phenix_runtime::bytes::ByteSlice<'a, Self>, ::phenix_runtime::DecodingError> {
                 #recognize_body
             }
@@ -206,7 +204,6 @@ pub fn by_parts(_: TokenStream, item: TokenStream) -> TokenStream {
         impl #impl_generics #name #ty_generics #where_clause {
             pub fn recognize_by_parts<'input, #lifetime>(
                 bytes: &'input mut ::phenix_runtime::bytes::Bytes<#lifetime>,
-                buf: &'input mut ::std::vec::Vec<u8>
             ) -> impl ::std::iter::Iterator<Item = ::std::result::Result<#parts_name #parts_ty_generics, ::phenix_runtime::DecodingError>> + 'input
             where
                 Self: ::phenix_runtime::Decodable

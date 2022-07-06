@@ -8,7 +8,7 @@ use serde::Serialize;
 use tera::{Context as TeraContext, Tera};
 
 use crate::{
-    shared::{self, TypeDependencyOrder, TypeDependency, ProjectContext},
+    shared::{self, ProjectContext, TypeDependency, TypeDependencyOrder},
     Attribute, BuiltinType, EnumType, Field, FlagsType, Module, StructType, Type, TypeId, UserType,
     Variant,
 };

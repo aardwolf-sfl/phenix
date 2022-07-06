@@ -68,7 +68,7 @@ fn rust_to_rust() {
 
     let bytes = cursor.into_inner();
 
-    let decoded = schema::Person::decode(&mut Bytes::new(&bytes), &mut Vec::new()).unwrap();
+    let decoded = schema::Person::decode(&mut Bytes::new(&bytes)).unwrap();
     let collected = decoded.projects.collect(&bytes).unwrap();
 
     assert_eq!(decoded, person);
@@ -93,7 +93,7 @@ fn c_to_rust() {
 
     let bytes = fs::read(tmp.path()).unwrap();
 
-    let decoded = schema::Person::decode(&mut Bytes::new(&bytes), &mut Vec::new()).unwrap();
+    let decoded = schema::Person::decode(&mut Bytes::new(&bytes)).unwrap();
     let collected = decoded.projects.collect(&bytes).unwrap();
 
     let (person, projects) = expected();

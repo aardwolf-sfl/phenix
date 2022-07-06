@@ -36,7 +36,7 @@ pub fn decode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
             Some(option_ty) => {
                 let decode_field = quote! {
                     if ::phenix_runtime::base::utils::test_bit_at(#optional_bit, optional__) {
-                        ::std::option::Option::Some(<#option_ty>::decode(bytes, buf)?)
+                        ::std::option::Option::Some(<#option_ty>::decode(bytes)?)
                     } else {
                         ::std::option::Option::None
                     }
@@ -45,7 +45,7 @@ pub fn decode_struct(data: &DataStruct, name: Ident, is_exhaustive: bool) -> Tok
                 optional_bit += 1;
                 decode_field
             }
-            None => quote!(<#field_ty>::decode(bytes, buf)?),
+            None => quote!(<#field_ty>::decode(bytes)?),
         };
 
         body.extend(quote!( let #field_name = #decode_field;));
@@ -98,7 +98,7 @@ pub fn decode_enum(data: &DataEnum, name: Ident, is_exhaustive: bool) -> TokenSt
                 .unwrap_or_else(|| util::unnamed_field_name(i));
             let field_ty = &field.ty;
 
-            quote!(let #field_name = <#field_ty>::decode(bytes, buf)?;)
+            quote!(let #field_name = <#field_ty>::decode(bytes)?;)
         });
 
         let fields_list = variant

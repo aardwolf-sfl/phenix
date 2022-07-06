@@ -36,9 +36,8 @@ pub mod uint {
         writer.write_all(&bytes[..n_bytes])
     }
 
-    pub fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<u64, DecodingError> {
-        buf.clear();
-        buf.resize(mem::size_of::<u64>(), 0);
+    pub fn decode(bytes: &mut Bytes<'_>) -> Result<u64, DecodingError> {
+        let mut buf = [0u8; mem::size_of::<u64>()];
 
         let small = bytes
             .first()
@@ -95,7 +94,7 @@ pub mod uint {
 
         fn decode_from_bytes(value: &[u8]) -> Result<u64, DecodingError> {
             let mut bytes = Bytes::new(value);
-            decode(&mut bytes, &mut Vec::new())
+            decode(&mut bytes)
         }
 
         fn recognize_from_bytes(value: &[u8]) -> Result<ByteSlice<'_, u64>, DecodingError> {
@@ -141,8 +140,8 @@ pub mod sint {
         super::uint::encode(value, writer)
     }
 
-    pub fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<i64, DecodingError> {
-        let value = super::uint::decode(bytes, buf)?;
+    pub fn decode(bytes: &mut Bytes<'_>) -> Result<i64, DecodingError> {
+        let value = super::uint::decode(bytes)?;
 
         let value = (value >> 1) ^ (!(value & 1)).wrapping_add(1);
         Ok(i64::from_le_bytes(value.to_le_bytes()))
@@ -168,7 +167,7 @@ pub mod sint {
 
         fn decode_from_bytes(value: &[u8]) -> Result<i64, DecodingError> {
             let mut bytes = Bytes::new(value);
-            decode(&mut bytes, &mut Vec::new())
+            decode(&mut bytes)
         }
 
         fn recognize_from_bytes(value: &[u8]) -> Result<ByteSlice<'_, i64>, DecodingError> {
@@ -215,8 +214,8 @@ pub mod float {
         super::uint::encode(value, writer)
     }
 
-    pub fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<f64, DecodingError> {
-        let value = super::uint::decode(bytes, buf)?;
+    pub fn decode(bytes: &mut Bytes<'_>) -> Result<f64, DecodingError> {
+        let value = super::uint::decode(bytes)?;
         Ok(f64::from_be_bytes(value.to_le_bytes()))
     }
 
@@ -240,7 +239,7 @@ pub mod float {
 
         fn decode_from_bytes(value: &[u8]) -> Result<f64, DecodingError> {
             let mut bytes = Bytes::new(value);
-            decode(&mut bytes, &mut Vec::new())
+            decode(&mut bytes)
         }
 
         fn recognize_from_bytes(value: &[u8]) -> Result<ByteSlice<'_, f64>, DecodingError> {
@@ -448,11 +447,8 @@ pub mod utils {
         super::uint::encode(n as u64, writer)
     }
 
-    pub fn decode_discriminant_relaxed(
-        bytes: &mut Bytes<'_>,
-        buf: &mut Vec<u8>,
-    ) -> Result<usize, DecodingError> {
-        super::uint::decode(bytes, buf).map(|n| n as usize)
+    pub fn decode_discriminant_relaxed(bytes: &mut Bytes<'_>) -> Result<usize, DecodingError> {
+        super::uint::decode(bytes).map(|n| n as usize)
     }
 
     pub fn byte_index_of(bit: usize) -> usize {

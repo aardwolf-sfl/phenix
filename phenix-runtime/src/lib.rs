@@ -219,23 +219,18 @@ impl<T: Decodable> Stream<T> {
 
         StreamIter {
             bytes,
-            buf: Vec::new(),
             ty: PhantomData,
         }
     }
 
     pub fn collect(&self, origin: &[u8]) -> Result<Vec<T>, DecodingError> {
-        let mut buf = Vec::new();
-        self.iter(origin)
-            .map(|value| value?.decode(&mut buf))
-            .collect()
+        self.iter(origin).map(|value| value?.decode()).collect()
     }
 }
 
 #[derive(Debug)]
 pub struct StreamIter<'a, T> {
     bytes: bytes::Bytes<'a>,
-    buf: Vec<u8>,
     ty: PhantomData<fn() -> T>,
 }
 
@@ -247,7 +242,7 @@ impl<'a, T: Decodable> Iterator for StreamIter<'a, T> {
             return None;
         }
 
-        Some(T::recognize(&mut self.bytes, &mut self.buf))
+        Some(T::recognize(&mut self.bytes))
     }
 }
 

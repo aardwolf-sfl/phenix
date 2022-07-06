@@ -18,20 +18,16 @@ pub trait Encodable: Sized {
 }
 
 pub trait Decodable: Sized {
-    fn decode(bytes: &mut Bytes<'_>, buf: &mut Vec<u8>) -> Result<Self, DecodingError>;
-    fn recognize<'a>(
-        bytes: &mut Bytes<'a>,
-        buf: &mut Vec<u8>,
-    ) -> Result<ByteSlice<'a, Self>, DecodingError>;
+    fn decode(bytes: &mut Bytes<'_>) -> Result<Self, DecodingError>;
+    fn recognize<'a>(bytes: &mut Bytes<'a>) -> Result<ByteSlice<'a, Self>, DecodingError>;
 
     fn decode_many(
         bytes: &mut Bytes<'_>,
-        buf: &mut Vec<u8>,
         n: usize,
         values: &mut Vec<Self>,
     ) -> Result<(), DecodingError> {
         for _ in 0..n {
-            values.push(Self::decode(bytes, buf)?);
+            values.push(Self::decode(bytes)?);
         }
 
         Ok(())
@@ -39,13 +35,12 @@ pub trait Decodable: Sized {
 
     fn recognize_many<'a>(
         bytes: &mut Bytes<'a>,
-        buf: &mut Vec<u8>,
         n: usize,
     ) -> Result<ByteSlice<'a, Self>, DecodingError> {
         let mark = bytes.mark();
 
         for _ in 0..n {
-            Self::recognize(bytes, buf)?;
+            Self::recognize(bytes)?;
         }
 
         Ok(bytes.take_slice_from(mark))
@@ -53,37 +48,31 @@ pub trait Decodable: Sized {
 }
 
 impl<T: Decodable> ByteSlice<'_, T> {
-    pub fn decode(&self, buf: &mut Vec<u8>) -> Result<T, DecodingError> {
+    pub fn decode(&self) -> Result<T, DecodingError> {
         let mut bytes = Bytes::new(self.as_bytes());
-        T::decode(&mut bytes, buf)
+        T::decode(&mut bytes)
     }
 
-    pub fn decode_many(
-        &self,
-        buf: &mut Vec<u8>,
-        n: usize,
-        values: &mut Vec<T>,
-    ) -> Result<(), DecodingError> {
+    pub fn decode_many(&self, n: usize, values: &mut Vec<T>) -> Result<(), DecodingError> {
         let mut bytes = Bytes::new(self.as_bytes());
-        T::decode_many(&mut bytes, buf, n, values)
+        T::decode_many(&mut bytes, n, values)
     }
 }
 
 impl<T: Decodable> ByteSpan<T> {
-    pub fn decode(&self, origin: &[u8], buf: &mut Vec<u8>) -> Result<T, DecodingError> {
+    pub fn decode(&self, origin: &[u8]) -> Result<T, DecodingError> {
         let mut bytes = Bytes::new(self.as_bytes(origin));
-        T::decode(&mut bytes, buf)
+        T::decode(&mut bytes)
     }
 
     pub fn decode_many(
         &self,
         origin: &[u8],
-        buf: &mut Vec<u8>,
         n: usize,
         values: &mut Vec<T>,
     ) -> Result<(), DecodingError> {
         let mut bytes = Bytes::new(self.as_bytes(origin));
-        T::decode_many(&mut bytes, buf, n, values)
+        T::decode_many(&mut bytes, n, values)
     }
 }
 

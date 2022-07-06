@@ -28,14 +28,11 @@ impl LazyMessage {
         let mut to = None;
         let mut text = None;
 
-        let mut buf1 = Vec::new();
-        let mut buf2 = Vec::new();
-
-        for part in Message::recognize_by_parts(&mut Bytes::new(bytes), &mut buf1) {
+        for part in Message::recognize_by_parts(&mut Bytes::new(bytes)) {
             match part? {
                 // Decode short presumably strings eagerly.
-                MessagePart::From(part) => from = Some(part.decode(&mut buf2)?),
-                MessagePart::To(part) => to = Some(part.decode(&mut buf2)?),
+                MessagePart::From(part) => from = Some(part.decode()?),
+                MessagePart::To(part) => to = Some(part.decode()?),
                 // Store the byte location of presumably long string for lazy
                 // decoding.
                 MessagePart::Text(part) => text = Some(part.span()),
@@ -50,7 +47,7 @@ impl LazyMessage {
     }
 
     pub fn text(&self, bytes: &[u8]) -> String {
-        self.text.decode(bytes, &mut Vec::new()).unwrap()
+        self.text.decode(bytes).unwrap()
     }
 }
 

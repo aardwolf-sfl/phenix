@@ -67,7 +67,7 @@ pub fn impl_recognize_by_parts(item: &ItemStruct, is_exhaustive: bool) -> TokenS
             Some(option_ty) => {
                 let recognize_field = quote! {
                     #state :: #s => if ::phenix_runtime::base::utils::test_bit_at(#optional_bit, optional) {
-                        <#option_ty>::recognize(bytes, buf).map(::std::option::Option::Some).map(#parts_name :: #variant)
+                        <#option_ty>::recognize(bytes).map(::std::option::Option::Some).map(#parts_name :: #variant)
                     } else {
                         ::std::result::Result::Ok(::std::option::Option::None).map(#parts_name :: #variant)
                     }
@@ -77,7 +77,7 @@ pub fn impl_recognize_by_parts(item: &ItemStruct, is_exhaustive: bool) -> TokenS
                 recognize_field
             }
             None => {
-                quote!(#state :: #s => <#field_ty>::recognize(bytes, buf).map(#parts_name :: #variant))
+                quote!(#state :: #s => <#field_ty>::recognize(bytes).map(#parts_name :: #variant))
             }
         };
 
@@ -106,7 +106,6 @@ pub fn impl_recognize_by_parts(item: &ItemStruct, is_exhaustive: bool) -> TokenS
             fn recognize<#lifetime>(
                 &self,
                 bytes: &mut ::phenix_runtime::bytes::Bytes<#lifetime>,
-                buf: &mut ::std::vec::Vec<u8>,
                 optional: &[u8],
                 error: &mut ::std::option::Option<::phenix_runtime::DecodingError>,
             ) -> ::std::option::Option<::std::result::Result<#parts_name #parts_ty_generics, ::phenix_runtime::DecodingError>> {
@@ -118,19 +117,18 @@ pub fn impl_recognize_by_parts(item: &ItemStruct, is_exhaustive: bool) -> TokenS
             }
         }
 
-        struct #by_parts<#lifetime, 'state> {
-            bytes: &'state mut ::phenix_runtime::bytes::Bytes<#lifetime>,
-            buf: &'state mut ::std::vec::Vec<u8>,
+        struct #by_parts<#lifetime, 'input> {
+            bytes: &'input mut ::phenix_runtime::bytes::Bytes<#lifetime>,
             optional: Vec<u8>,
             state: #state,
             error: Option<::phenix_runtime::DecodingError>,
         }
 
-        impl<#lifetime, 'state> ::std::iter::Iterator for #by_parts<#lifetime, 'state> {
+        impl<#lifetime, 'input> ::std::iter::Iterator for #by_parts<#lifetime, 'input> {
             type Item = ::std::result::Result<#parts_name #parts_ty_generics, ::phenix_runtime::DecodingError>;
 
             fn next(&mut self) -> ::std::option::Option<Self::Item> {
-                let value = self.state.recognize(self.bytes, self.buf, &self.optional, &mut self.error)?;
+                let value = self.state.recognize(self.bytes, &self.optional, &mut self.error)?;
                 self.state = self.state.next();
                 Some(value)
             }
@@ -159,7 +157,6 @@ pub fn impl_recognize_by_parts(item: &ItemStruct, is_exhaustive: bool) -> TokenS
     body.extend(quote! {
         #by_parts {
             bytes,
-            buf,
             optional,
             state,
             error,

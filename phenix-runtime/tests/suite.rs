@@ -298,16 +298,15 @@ where
             }
 
             let bytes = &mut Bytes::new(&test.bytes);
-            let buf = &mut Vec::new();
 
             match test.value.cast() {
                 Value::One(expected) => {
-                    let value = T::decode(bytes, buf).unwrap();
+                    let value = T::decode(bytes).unwrap();
                     assert_eq!(value, expected);
                 }
                 Value::Many(expected) => {
                     let mut values = Vec::with_capacity(expected.len());
-                    T::decode_many(bytes, buf, expected.len(), &mut values).unwrap();
+                    T::decode_many(bytes, expected.len(), &mut values).unwrap();
                     assert_eq!(values, expected);
                 }
             }
@@ -318,11 +317,10 @@ where
 
         for error in suite.errors {
             let bytes = &mut Bytes::new(&error.bytes);
-            let buf = &mut Vec::new();
 
             let actual = match error.many {
-                None => T::decode(bytes, buf).unwrap_err(),
-                Some(n) => T::decode_many(bytes, buf, n, &mut Vec::new()).unwrap_err(),
+                None => T::decode(bytes).unwrap_err(),
+                Some(n) => T::decode_many(bytes, n, &mut Vec::new()).unwrap_err(),
             };
 
             assert_eq!(actual, error.error.into());
@@ -341,22 +339,21 @@ where
             }
 
             let bytes = &mut Bytes::new(&test.bytes);
-            let buf = &mut Vec::new();
 
             match test.value.cast() {
                 Value::One(expected) => {
-                    let slice = T::recognize(bytes, buf).unwrap();
+                    let slice = T::recognize(bytes).unwrap();
                     assert_eq!(slice.as_bytes(), &test.bytes);
 
-                    let value = slice.decode(buf).unwrap();
+                    let value = slice.decode().unwrap();
                     assert_eq!(value, expected);
                 }
                 Value::Many(expected) => {
-                    let slice = T::recognize_many(bytes, buf, expected.len()).unwrap();
+                    let slice = T::recognize_many(bytes, expected.len()).unwrap();
                     assert_eq!(slice.as_bytes(), &test.bytes);
 
                     let mut values = Vec::with_capacity(expected.len());
-                    slice.decode_many(buf, expected.len(), &mut values).unwrap();
+                    slice.decode_many(expected.len(), &mut values).unwrap();
                     assert_eq!(values, expected);
                 }
             }
@@ -371,11 +368,10 @@ where
             }
 
             let bytes = &mut Bytes::new(&error.bytes);
-            let buf = &mut Vec::new();
 
             let actual = match error.many {
-                None => T::recognize(bytes, buf).unwrap_err(),
-                Some(n) => T::recognize_many(bytes, buf, n).unwrap_err(),
+                None => T::recognize(bytes).unwrap_err(),
+                Some(n) => T::recognize_many(bytes, n).unwrap_err(),
             };
 
             assert_eq!(actual, error.error.into());

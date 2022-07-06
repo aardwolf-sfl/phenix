@@ -1,8 +1,8 @@
 use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{quote, ToTokens};
 use syn::{
-    parse_quote, punctuated::Punctuated, DeriveInput, Fields, GenericParam, Generics, Ident, Type,
-    TypePath, Variant, ItemStruct,
+    parse_quote, punctuated::Punctuated, DeriveInput, Fields, GenericParam, Generics, Ident,
+    ItemStruct, Type, TypePath, Variant,
 };
 
 pub enum TypeKind {
